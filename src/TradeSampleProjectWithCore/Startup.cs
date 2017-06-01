@@ -32,6 +32,8 @@ namespace TradeSampleProjectWithCore
             {
                 await context.Response.WriteAsync("Hello World!");
             });
+
+            // test
         }
     }
 }
