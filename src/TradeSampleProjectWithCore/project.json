@@ -14,7 +14,7 @@
   },
 
   "frameworks": {
-    "netcoreapp1.0": {
+    "netcoreapp1.1.2": {
       "imports": [
         "dotnet5.6",
         "portable-net45+win8"
@@ -42,5 +42,10 @@
 
   "scripts": {
     "postpublish": [ "dotnet publish-iis --publish-folder %publish:OutputPath% --framework %publish:FullTargetFramework%" ]
+  },
+
+  // new
+  "runtimes": {
+    "win10-x64": {}
   }
 }
