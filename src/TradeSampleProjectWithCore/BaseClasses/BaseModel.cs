@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using TradeSampleProjectWithCore.Models;
 
 namespace TradeSampleProjectWithCore.BaseClasses
 {
@@ -16,5 +18,8 @@ namespace TradeSampleProjectWithCore.BaseClasses
         public int UpdateUserId { get; set; }
         [Required]
         public DateTime UpdateDate { get; set; }
+
+        [ForeignKey("UpdateUserId")]
+        public User User { get; set; }
     }
 }

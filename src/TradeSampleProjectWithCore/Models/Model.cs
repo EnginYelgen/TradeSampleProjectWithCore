@@ -18,17 +18,30 @@ namespace TradeSampleProjectWithCore.Models
         public DbSet<Country> Countries { get; set; }
         public DbSet<City> Cities { get; set; }
         public DbSet<Address> Addresses { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<ShoppingCart> ShoppingCarts { get; set; }
+        public DbSet<ShoppingCartDetail> ShoppingCartDetails { get; set; }
+        public DbSet<Order> Orders { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<User>().ToTable("User");
+            modelBuilder.Entity<Country>().ToTable("Country");
+            modelBuilder.Entity<City>().ToTable("City");
+            modelBuilder.Entity<Address>().ToTable("Address");
+            modelBuilder.Entity<Product>().ToTable("Product");
+            modelBuilder.Entity<ShoppingCart>().ToTable("ShoppingCart");
+            modelBuilder.Entity<ShoppingCartDetail>().ToTable("ShoppingCartDetail");
+            modelBuilder.Entity<Order>().ToTable("Order");
+
             modelBuilder.Entity<User>()
                 .HasIndex(e => e.MailAddress)
                 .HasName("Index_MailAddress")
                 .IsUnique(true);
 
-            modelBuilder.Entity<Address>()
-                .HasIndex(e => e.User)
-                .HasName("Index_User");
+            //modelBuilder.Entity<Address>()
+            //    .HasIndex(e => e.User)
+            //    .HasName("Index_User");
 
             modelBuilder.Entity<Product>()
                 .HasIndex(e => e.StockCode)
@@ -37,8 +50,10 @@ namespace TradeSampleProjectWithCore.Models
         }
     }
 
-    public class User : BaseModel
+    public class User
     {
+        [Key]
+        public int Id { get; set; }
         [Required]
         public string Password { get; set; }
         [Required]
@@ -54,6 +69,11 @@ namespace TradeSampleProjectWithCore.Models
         public string MailAddress { get; set; }
         [MaxLength(20)]
         public string Telephone { get; set; }
+        [Required]
+        public bool InUse { get; set; }
+        public int UpdateUserId { get; set; }
+        [Required]
+        public DateTime UpdateDate { get; set; }
 
         [NotMapped]
         public string FullName
@@ -64,7 +84,11 @@ namespace TradeSampleProjectWithCore.Models
             }
         }
 
-        public List<Address> Addresses { get; set; }
+        [ForeignKey("UpdateUserId")]
+        public User UpdateUser { get; set; }
+
+        public ICollection<User> Users { get; set; }
+        public ICollection<Address> Addresses { get; set; }
     }
 
     public class Country : BaseModel
@@ -73,7 +97,8 @@ namespace TradeSampleProjectWithCore.Models
         [MaxLength(100)]
         public string Name { get; set; }
 
-        public List<Address> Addresses { get; set; }
+        public ICollection<Address> Addresses { get; set; }
+        public ICollection<City> Cities { get; set; }
     }
 
     public class City : BaseModel
@@ -82,7 +107,12 @@ namespace TradeSampleProjectWithCore.Models
         [MaxLength(100)]
         public string Name { get; set; }
 
-        public List<Address> Addresses { get; set; }
+        [Required]
+        public int CountryId { get; set; }
+        [ForeignKey("CountryId")]
+        public Country Country { get; set; }
+
+        public ICollection<Address> Addresses { get; set; }
     }
 
     public class Address : BaseModel
@@ -114,10 +144,10 @@ namespace TradeSampleProjectWithCore.Models
         [ForeignKey("UserId")]
         public User User { get; set; }
 
-        public List<Order> Orders { get; set; }
+        public ICollection<Order> Orders { get; set; }
     }
 
-    public class Product:BaseModel
+    public class Product : BaseModel
     {
         [Required]
         [MaxLength(200)]
@@ -133,28 +163,37 @@ namespace TradeSampleProjectWithCore.Models
         [Required]
         public decimal UnitPrice { get; set; }
 
-        public List<ShoppingCart> ShoppingCarts { get; set; }
+        public ICollection<ShoppingCartDetail> ShoppingCartDetails { get; set; }
     }
 
-    public class ShoppingCart
+    public class ShoppingCart : BaseModel
+    {
+        public DateTime CreateDate { get; set; }
+        [Required]
+        public int UserId { get; set; }
+        [ForeignKey("UserId")]
+        public User User { get; set; }
+
+        public ICollection<Order> Orders { get; set; }
+        public ICollection<ShoppingCartDetail> ShoppingCartDetails { get; set; }
+    }
+
+    public class ShoppingCartDetail : BaseModel
     {
         [Required]
         public int NumberOfProduct { get; set; }
 
         [Required]
+        public int ShoppingCartId { get; set; }
+        [ForeignKey("ShoppingCartId")]
+        public ShoppingCart ShoppingCart { get; set; }
+        [Required]
         public int ProductId { get; set; }
         [ForeignKey("ProductId")]
         public Product Product { get; set; }
-        [Required]
-        public int UserId { get; set; }
-        [ForeignKey("UserId")]
-        public User User { get; set; }
-        public int OrderId { get; set; }
-        [ForeignKey("OrderId")]
-        public Order Order { get; set; }
     }
 
-    public class Order
+    public class Order : BaseModel
     {
         [Required]
         public DateTime OrderDate { get; set; }
@@ -170,7 +209,9 @@ namespace TradeSampleProjectWithCore.Models
         public int AddressId { get; set; }
         [ForeignKey("AddressId")]
         public Address Address { get; set; }
-
-        public List<ShoppingCart> ShoppingCarts { get; set; }
+        [Required]
+        public int ShoppingCartId { get; set; }
+        [ForeignKey("ShoppingCartId")]
+        public ShoppingCart ShoppingCart { get; set; }
     }
 }
