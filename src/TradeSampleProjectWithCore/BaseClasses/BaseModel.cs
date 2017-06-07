@@ -20,6 +20,6 @@ namespace TradeSampleProjectWithCore.BaseClasses
         public DateTime UpdateDate { get; set; }
 
         [ForeignKey("UpdateUserId")]
-        public User User { get; set; }
+        public User UpdateUser { get; set; }
     }
 }
