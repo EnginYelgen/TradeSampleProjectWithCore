@@ -13,7 +13,8 @@
     "Microsoft.Extensions.Configuration.Json": "1.1.2",
     "Microsoft.AspNetCore.Cryptography.KeyDerivation": "1.1.2",
     "Microsoft.Extensions.Logging.Debug": "1.1.2",
-    "Microsoft.VisualStudio.Web.CodeGenerators.Mvc": "1.1.1"
+    "Microsoft.VisualStudio.Web.CodeGenerators.Mvc": "1.1.1",
+    "Microsoft.EntityFrameworkCore.Tools": "1.1.1"
   },
 
   // new
