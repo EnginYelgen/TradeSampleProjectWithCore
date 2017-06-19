@@ -28,7 +28,7 @@ namespace TradeSampleProjectWithCore
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, TradeSampleContext context)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             //loggerFactory.AddConsole();
             loggerFactory.AddConsole(Program.Configuration.GetSection("Logging"));
@@ -46,7 +46,7 @@ namespace TradeSampleProjectWithCore
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            DbInitialize.Initialize(context);
+            DbInitialize.Initialize(app.ApplicationServices.GetRequiredService<TradeSampleContext>());
 
             //app.Run(async (context) =>
             //{

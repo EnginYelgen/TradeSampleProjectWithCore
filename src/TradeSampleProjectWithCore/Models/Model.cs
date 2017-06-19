@@ -56,8 +56,8 @@ namespace TradeSampleProjectWithCore.Models
                 .IsUnique(true);
 
             modelBuilder.Entity<City>()
-                .HasIndex(e => new { e.Name, e.Country })
-                .HasName("Index_City_NameAndCountry")
+                .HasIndex(e => new { e.Name, e.CountryId })
+                .HasName("Index_City_NameAndCountryId")
                 .IsUnique(true);
         }
     }
@@ -97,10 +97,10 @@ namespace TradeSampleProjectWithCore.Models
         }
 
         [ForeignKey("UpdateUserId")]
-        public User UpdateUser { get; set; }
+        public virtual User UpdateUser { get; set; }
 
-        public ICollection<User> Users { get; set; }
-        public ICollection<Address> Addresses { get; set; }
+        public virtual ICollection<User> Users { get; set; }
+        public virtual ICollection<Address> Addresses { get; set; }
     }
 
     public class Country : BaseModel
@@ -109,8 +109,8 @@ namespace TradeSampleProjectWithCore.Models
         [MaxLength(100)]
         public string Name { get; set; }
 
-        public ICollection<Address> Addresses { get; set; }
-        public ICollection<City> Cities { get; set; }
+        public virtual ICollection<Address> Addresses { get; set; }
+        public virtual ICollection<City> Cities { get; set; }
     }
 
     public class City : BaseModel
@@ -122,9 +122,9 @@ namespace TradeSampleProjectWithCore.Models
         [Required]
         public int CountryId { get; set; }
         [ForeignKey("CountryId")]
-        public Country Country { get; set; }
+        public virtual Country Country { get; set; }
 
-        public ICollection<Address> Addresses { get; set; }
+        public virtual ICollection<Address> Addresses { get; set; }
     }
 
     public class Address : BaseModel
@@ -144,19 +144,19 @@ namespace TradeSampleProjectWithCore.Models
         [Required]
         public int CityId { get; set; }
         [ForeignKey("CityId")]
-        public City City { get; set; }
+        public virtual City City { get; set; }
 
         [Required]
         public int CountryId { get; set; }
         [ForeignKey("CountryId")]
-        public Country Country { get; set; }
+        public virtual Country Country { get; set; }
 
         [Required]
         public int UserId { get; set; }
         [ForeignKey("UserId")]
-        public User User { get; set; }
+        public virtual User User { get; set; }
 
-        public ICollection<Order> Orders { get; set; }
+        public virtual ICollection<Order> Orders { get; set; }
     }
 
     public class ProductCategory : BaseModel
@@ -167,7 +167,7 @@ namespace TradeSampleProjectWithCore.Models
         [MaxLength(500)]
         public string Description { get; set; }
 
-        public ICollection<Product> Products { get; set; }
+        public virtual ICollection<Product> Products { get; set; }
     }
 
     public class Product : BaseModel
@@ -189,9 +189,9 @@ namespace TradeSampleProjectWithCore.Models
         [Required]
         public int ProductCategoryId { get; set; }
         [ForeignKey("ProductCategoryId")]
-        public ProductCategory ProductCategory { get; set; }
+        public virtual ProductCategory ProductCategory { get; set; }
 
-        public ICollection<ShoppingCartDetail> ShoppingCartDetails { get; set; }
+        public virtual ICollection<ShoppingCartDetail> ShoppingCartDetails { get; set; }
     }
 
     public class ShoppingCart : BaseModel
@@ -201,10 +201,10 @@ namespace TradeSampleProjectWithCore.Models
         [Required]
         public int UserId { get; set; }
         [ForeignKey("UserId")]
-        public User User { get; set; }
+        public virtual User User { get; set; }
 
-        public ICollection<Order> Orders { get; set; }
-        public ICollection<ShoppingCartDetail> ShoppingCartDetails { get; set; }
+        public virtual ICollection<Order> Orders { get; set; }
+        public virtual ICollection<ShoppingCartDetail> ShoppingCartDetails { get; set; }
     }
 
     public class ShoppingCartDetail : BaseModel
@@ -215,11 +215,11 @@ namespace TradeSampleProjectWithCore.Models
         [Required]
         public int ShoppingCartId { get; set; }
         [ForeignKey("ShoppingCartId")]
-        public ShoppingCart ShoppingCart { get; set; }
+        public virtual ShoppingCart ShoppingCart { get; set; }
         [Required]
         public int ProductId { get; set; }
         [ForeignKey("ProductId")]
-        public Product Product { get; set; }
+        public virtual Product Product { get; set; }
     }
 
     public class Order : BaseModel
@@ -237,10 +237,10 @@ namespace TradeSampleProjectWithCore.Models
         [Required]
         public int AddressId { get; set; }
         [ForeignKey("AddressId")]
-        public Address Address { get; set; }
+        public virtual Address Address { get; set; }
         [Required]
         public int ShoppingCartId { get; set; }
         [ForeignKey("ShoppingCartId")]
-        public ShoppingCart ShoppingCart { get; set; }
+        public virtual ShoppingCart ShoppingCart { get; set; }
     }
 }
