@@ -5,6 +5,7 @@ using TradeSampleProjectWithCore.BaseClasses;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Linq;
 
 namespace TradeSampleProjectWithCore.Models
 {
@@ -36,14 +37,11 @@ namespace TradeSampleProjectWithCore.Models
             modelBuilder.Entity<ShoppingCartDetail>().ToTable("ShoppingCartDetail");
             modelBuilder.Entity<Order>().ToTable("Order");
 
+            // Constraints
             modelBuilder.Entity<User>()
                 .HasIndex(e => e.MailAddress)
                 .HasName("Index_User_MailAddress")
                 .IsUnique(true);
-
-            //modelBuilder.Entity<Address>()
-            //    .HasIndex(e => e.User)
-            //    .HasName("Index_User");
 
             modelBuilder.Entity<Product>()
                 .HasIndex(e => e.StockCode)
@@ -59,6 +57,23 @@ namespace TradeSampleProjectWithCore.Models
                 .HasIndex(e => new { e.Name, e.CountryId })
                 .HasName("Index_City_NameAndCountryId")
                 .IsUnique(true);
+
+            // Keys
+            modelBuilder.Entity<Address>()
+                .HasOne(e => e.User)
+                .WithMany(e => e.AddressesUser)
+                .HasForeignKey(e => e.UserId);
+
+            modelBuilder.Entity<Address>()
+                .HasOne(e => e.UpdateUser)
+                .WithMany(e => e.AddressesUpdateUser)
+                .HasForeignKey(e => e.UpdateUserId);
+
+            foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
+            {
+                relationship.DeleteBehavior = Microsoft.EntityFrameworkCore.Metadata.DeleteBehavior.Restrict;
+            }
+
         }
     }
 
@@ -83,7 +98,7 @@ namespace TradeSampleProjectWithCore.Models
         public string Telephone { get; set; }
         [Required]
         public bool InUse { get; set; }
-        public int UpdateUserId { get; set; }
+        public int? UpdateUserId { get; set; }
         [Required]
         public DateTime UpdateDate { get; set; }
 
@@ -100,7 +115,8 @@ namespace TradeSampleProjectWithCore.Models
         public virtual User UpdateUser { get; set; }
 
         public virtual ICollection<User> Users { get; set; }
-        public virtual ICollection<Address> Addresses { get; set; }
+        public virtual ICollection<Address> AddressesUpdateUser { get; set; }
+        public virtual ICollection<Address> AddressesUser { get; set; }
     }
 
     public class Country : BaseModel
@@ -127,8 +143,10 @@ namespace TradeSampleProjectWithCore.Models
         public virtual ICollection<Address> Addresses { get; set; }
     }
 
-    public class Address : BaseModel
+    public class Address
     {
+        [Key]
+        public int Id { get; set; }
         [Required]
         [MaxLength(100)]
         public string Street { get; set; }
@@ -140,6 +158,10 @@ namespace TradeSampleProjectWithCore.Models
         public string PostCode { get; set; }
         [MaxLength(500)]
         public string Description { get; set; }
+        [Required]
+        public bool InUse { get; set; }
+        [Required]
+        public DateTime UpdateDate { get; set; }
 
         [Required]
         public int CityId { get; set; }
@@ -153,8 +175,13 @@ namespace TradeSampleProjectWithCore.Models
 
         [Required]
         public int UserId { get; set; }
-        [ForeignKey("UserId")]
+        //[ForeignKey("UserId")]
         public virtual User User { get; set; }
+
+        [Required]
+        public int UpdateUserId { get; set; }
+        //[ForeignKey("UpdateUserId")]
+        public virtual User UpdateUser { get; set; }
 
         public virtual ICollection<Order> Orders { get; set; }
     }

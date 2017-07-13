@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using TradeSampleProjectWithCore.Models;
-
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace TradeSampleProjectWithCore
 {
@@ -22,9 +22,35 @@ namespace TradeSampleProjectWithCore
         {
             // Add framework services.
             services.AddDbContext<TradeSampleContext>(options =>
-                options.UseSqlServer(Program.Configuration.GetConnectionString("UniteksConnection")));
+                options.UseSqlServer(Program.Configuration.GetConnectionString("ActiveConnection")));
+
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<TradeSampleContext>()
+                .AddDefaultTokenProviders();
 
             services.AddMvc();
+
+            //services.Configure<IdentityOptions>(options =>
+            //{
+            //    // Password settings
+            //    options.Password.RequireDigit = true;
+            //    options.Password.RequiredLength = 8;
+            //    options.Password.RequireNonAlphanumeric = false;
+            //    options.Password.RequireUppercase = true;
+            //    options.Password.RequireLowercase = false;
+
+            //    // Lockout settings
+            //    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+            //    options.Lockout.MaxFailedAccessAttempts = 10;
+
+            //    // Cookie settings
+            //    options.Cookies.ApplicationCookie.ExpireTimeSpan = TimeSpan.FromDays(150);
+            //    options.Cookies.ApplicationCookie.LoginPath = "/Account/LogIn";
+            //    options.Cookies.ApplicationCookie.LogoutPath = "/Account/LogOut";
+
+            //    // User settings
+            //    options.User.RequireUniqueEmail = true;
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -33,6 +59,8 @@ namespace TradeSampleProjectWithCore
             //loggerFactory.AddConsole();
             loggerFactory.AddConsole(Program.Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+
+            app.UseStaticFiles();
 
             if (env.IsDevelopment())
             {
@@ -43,7 +71,11 @@ namespace TradeSampleProjectWithCore
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Account}/{action=Login}/{id?}");
+
+                //routes.MapRoute(
+                //    name: "default",
+                //    template: "{controller=Home}/{action=Index}/{id?}");
             });
 
             DbInitialize.Initialize(app.ApplicationServices.GetRequiredService<TradeSampleContext>());
