@@ -21,34 +21,12 @@ namespace TradeSampleProjectWithCore.Controllers
             this.appContext = context;
         }
 
-        [HttpGet]
-        [AllowAnonymous]
-        public IActionResult Register()
-        {
-            return View();
-        }
-
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(Register model)
+        public IActionResult Register()
         {
-            if (ModelState.IsValid)
-            {
-                var user = new ApplicationUser
-                {
-                    UserName = model.Email,
-                    Email = model.Email
-                };
-                //var result = await _securityManager.CreateAsync(user, model.Password);
-                //if (result.Succeeded)
-                //{
-                //    await _loginManager.SignInAsync(user, isPersistent: false);
-                //    return RedirectToAction(nameof(HomeController.Index), "Home");
-                //}
-            }
-
-            return View(model);
+            return RedirectToAction("Index", "Register");
         }
 
         [HttpGet]
@@ -76,7 +54,7 @@ namespace TradeSampleProjectWithCore.Controllers
                     string userPass = appContext.Users.Where(x => x.MailAddress == model.Email).Single().Password;
 
                     if (userPass == hashedPass)
-                        return RedirectToReturnUrl("Home");
+                        return RedirectToAction("Index", "Home");
                     else
                         ViewData["Message"] = "Şifre yanlış";
                 }
@@ -91,21 +69,7 @@ namespace TradeSampleProjectWithCore.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LogOff()
         {
-            //await _loginManager.SignOutAsync();
-
-            return RedirectToAction("Login", nameof(AccountController));
-        }
-
-        private IActionResult RedirectToReturnUrl(string returnUrl)
-        {
-            if (Url.IsLocalUrl(returnUrl))
-            {
-                return Redirect(returnUrl);
-            }
-            else
-            {
-                return RedirectToAction("Login", nameof(AccountController));
-            }
+            return RedirectToAction("Login", "Account");
         }
     }
 }
