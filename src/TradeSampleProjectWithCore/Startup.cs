@@ -24,19 +24,19 @@ namespace TradeSampleProjectWithCore
             services.AddDbContext<TradeSampleContext>(options =>
                 options.UseSqlServer(Program.Configuration.GetConnectionString("ActiveConnection")));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<TradeSampleContext>()
-                .AddDefaultTokenProviders();
+            //services.AddIdentity<User, IdentityRole>()
+            //    .AddEntityFrameworkStores<TradeSampleContext>()
+            //    .AddDefaultTokenProviders();
 
             services.AddMvc();
 
             //services.Configure<IdentityOptions>(options =>
             //{
             //    // Password settings
-            //    options.Password.RequireDigit = true;
-            //    options.Password.RequiredLength = 8;
+            //    options.Password.RequireDigit = false;
+            //    //options.Password.RequiredLength = 8;
             //    options.Password.RequireNonAlphanumeric = false;
-            //    options.Password.RequireUppercase = true;
+            //    options.Password.RequireUppercase = false;
             //    options.Password.RequireLowercase = false;
 
             //    // Lockout settings
@@ -61,6 +61,7 @@ namespace TradeSampleProjectWithCore
             loggerFactory.AddDebug();
 
             app.UseStaticFiles();
+            //app.UseIdentity();
 
             if (env.IsDevelopment())
             {
@@ -72,18 +73,9 @@ namespace TradeSampleProjectWithCore
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Account}/{action=Login}/{id?}");
-
-                //routes.MapRoute(
-                //    name: "default",
-                //    template: "{controller=Home}/{action=Index}/{id?}");
             });
 
             DbInitialize.Initialize(app.ApplicationServices.GetRequiredService<TradeSampleContext>());
-
-            //app.Run(async (context) =>
-            //{
-            //    await context.Response.WriteAsync("Hello World!");
-            //});
         }
     }
 }

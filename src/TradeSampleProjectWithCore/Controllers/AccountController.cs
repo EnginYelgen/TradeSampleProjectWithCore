@@ -7,18 +7,26 @@ using Microsoft.AspNetCore.Identity;
 using TradeSampleProjectWithCore.Models;
 using Microsoft.AspNetCore.Authorization;
 
-
-// For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace TradeSampleProjectWithCore.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly TradeSampleContext appContext;
+        private readonly TradeSampleContext _context;
+        //private readonly UserManager<User> _userManager;
+        //private readonly SignInManager<User> _signInManager;
 
+        //public AccountController(
+        //    TradeSampleContext context,
+        //    UserManager<User> userManager,
+        //    SignInManager<User> signInManager)
+        //{
+        //    this._context = context;
+        //    this._userManager = userManager;
+        //    this._signInManager = signInManager;
+        //}
         public AccountController(TradeSampleContext context)
         {
-            this.appContext = context;
+            this._context = context;
         }
 
         [HttpPost]
@@ -40,8 +48,7 @@ namespace TradeSampleProjectWithCore.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Login(Login model, string returnUrl = null)
-        public IActionResult Login(Login model, string returnUrl = null)
+        public async Task<IActionResult> Login(Login model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
 
@@ -49,17 +56,30 @@ namespace TradeSampleProjectWithCore.Controllers
             {
                 string hashedPass = Common.Security.GetHashed(model.Password);
 
-                if (appContext.Users.Any(x => x.MailAddress == model.Email))
+                if (_context.Users.Any(x => x.MailAddress == model.Email))
                 {
-                    string userPass = appContext.Users.Where(x => x.MailAddress == model.Email).Single().Password;
+                    User loginUser = _context.Users.Where(x => x.MailAddress == model.Email).Single();
 
-                    if (userPass == hashedPass)
+                    if (loginUser.Password == hashedPass)
+                    {
                         return RedirectToAction("Index", "Home");
+                    }
                     else
                         ViewData["Message"] = "Şifre yanlış";
                 }
                 else
                     ViewData["Message"] = "E-posta adresi bulunamadı";
+
+                //Microsoft.AspNetCore.Identity.SignInResult result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
+
+                //if (result.Succeeded)
+                //{
+                //    return RedirectToAction("Index", "Home");
+                //}
+                //else
+                //{
+                //    ViewData["Message"] = "Email veya şifre yanlış";
+                //}
             }
 
             return View(model);
@@ -69,6 +89,7 @@ namespace TradeSampleProjectWithCore.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LogOff()
         {
+            //await _signInManager.SignOutAsync();
             return RedirectToAction("Login", "Account");
         }
     }

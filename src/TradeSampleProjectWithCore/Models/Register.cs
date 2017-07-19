@@ -12,7 +12,7 @@ namespace TradeSampleProjectWithCore.Models
         [DataType(DataType.EmailAddress, ErrorMessage = "Geçersiz e-posta formatı")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Gerekli alan")]
         public string Email { get; set; }
-        
+
         [Display(Name = "İsim")]
         [DataType(DataType.Text)]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Gerekli alan")]

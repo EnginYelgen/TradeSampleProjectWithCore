@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using TradeSampleProjectWithCore.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -13,6 +14,15 @@ namespace TradeSampleProjectWithCore.Controllers
     public class RegisterController : Controller
     {
         private readonly TradeSampleContext appContext;
+        //private readonly UserManager<User> _userManager;
+
+        //public RegisterController(
+        //    TradeSampleContext context,
+        //    UserManager<User> userManager)
+        //{
+        //    this.appContext = context;
+        //    this._userManager = userManager;
+        //}
 
         public RegisterController(TradeSampleContext context)
         {
@@ -64,6 +74,35 @@ namespace TradeSampleProjectWithCore.Controllers
                         appContext.SaveChanges();
 
                         return RedirectToAction("Login", "Account");
+
+                        //IdentityResult result = _userManager.CreateAsync(
+                        //new Models.User
+                        //{
+                        //    UserName = model.Email,
+                        //    Email = model.Email,
+                        //    //PasswordHash = hashedPass,
+                        //    Birthday = model.Birthday,
+                        //    PhoneNumber = model.Telephone,
+                        //    InUse = true,
+                        //    UpdateDate = DateTime.Now
+                        //}, model.Password).Result;
+
+                        //if (result.Succeeded)
+                        //{
+                        //    return RedirectToAction("Login", "Account");
+                        //}
+                        //else
+                        //{
+                        //    //string errMess = "İşlem sırasında hata oluştu";
+                        //    string errMess = string.Empty;
+
+                        //    foreach (IdentityError err in result.Errors)
+                        //    {
+                        //        errMess += err.Description + "\n";
+                        //    }
+
+                        //    ViewData["Message"] = errMess;
+                        //}
                     }
                     catch (Exception ex)
                     {
