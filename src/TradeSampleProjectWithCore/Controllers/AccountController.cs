@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using TradeSampleProjectWithCore.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace TradeSampleProjectWithCore.Controllers
 {
@@ -39,9 +40,43 @@ namespace TradeSampleProjectWithCore.Controllers
 
         [HttpGet]
         [AllowAnonymous]
+        public IActionResult Unauthorized(string returnUrl = "/")
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+            return View();
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult Forbidden(string returnUrl = "/")
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+            return View();
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
         public IActionResult Login(string returnUrl = "/")
         {
             ViewData["ReturnUrl"] = returnUrl;
+
+            ClaimsPrincipal loggedInUser = HttpContext.User;
+            //var loggedInUserName = loggedInUser.Identity.Name;
+            List<Claim> listClaim = loggedInUser.Claims.ToList();
+
+            if (listClaim.Count > 0)
+            {
+                if (_context.Users.Any(x => x.MailAddress == listClaim[0].Value))
+                {
+                    User loginUser = _context.Users.Where(x => x.MailAddress == listClaim[0].Value).Single();
+
+                    if (loginUser.Password == listClaim[1].Value)
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
+                }
+            }
+
             return View();
         }
 
@@ -62,10 +97,26 @@ namespace TradeSampleProjectWithCore.Controllers
 
                     if (loginUser.Password == hashedPass)
                     {
+                        List<Claim> claims = new List<Claim>
+                        {
+                            new Claim(ClaimTypes.Authentication, model.Email),
+                            new Claim(ClaimTypes.Authentication, hashedPass),
+                            new Claim(ClaimTypes.Authentication, loginUser.Name + " " + loginUser.Surname)
+                        };
+
+                        ClaimsIdentity userIdentity = new ClaimsIdentity(claims, "login");
+
+                        ClaimsPrincipal principal = new ClaimsPrincipal(userIdentity);
+                        await HttpContext.Authentication.SignInAsync("CookieAuthentication", principal);
+
                         return RedirectToAction("Index", "Home");
                     }
                     else
+                    {
                         ViewData["Message"] = "Şifre yanlış";
+
+                        //return RedirectToAction("Unauthorized", "Account");
+                    }
                 }
                 else
                     ViewData["Message"] = "E-posta adresi bulunamadı";
@@ -90,6 +141,9 @@ namespace TradeSampleProjectWithCore.Controllers
         public async Task<IActionResult> LogOff()
         {
             //await _signInManager.SignOutAsync();
+
+            await HttpContext.Authentication.SignOutAsync("CookieAuthentication");
+
             return RedirectToAction("Login", "Account");
         }
     }

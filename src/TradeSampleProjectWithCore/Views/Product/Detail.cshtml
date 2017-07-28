@@ -1,0 +1,42 @@
+﻿@model TradeSampleProjectWithCore.Models.ViewModelProduct
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Ürün Detayı";
+}
+
+<div class="row">
+    <div class="col-md-4 col-md-offset-4">
+        <section>
+            <form asp-controller="Detail" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
+                <div class="form-group">
+                    <label asp-for="Name"></label>
+                    <input asp-for="Name" class="form-control input-lg" readonly="readonly" />
+                </div>
+                <div class="form-group">
+                    <label asp-for="UnitPrice"></label>
+                    <input asp-for="UnitPrice" class="form-control input-lg" readonly="readonly" />
+                </div>
+                <div class="form-group">
+                    <label asp-for="ProductCategory.Name"></label>
+                    <input asp-for="ProductCategory.Name" class="form-control input-lg" readonly="readonly" />
+                </div>
+                <div class="form-group">
+                    <label asp-for="StockCode"></label>
+                    <input asp-for="StockCode" class="form-control input-lg" readonly="readonly" />
+                </div>
+                <div class="form-group">
+                    <label asp-for="StockNumber"></label>
+                    <input asp-for="StockNumber" class="form-control input-lg" readonly="readonly" />
+                </div>
+                <div class="form-group">
+                    <label asp-for="Description"></label>
+                    <input asp-for="Description" class="form-control input-lg" readonly="readonly" />
+                </div>
+                <div class="form-group">
+                    <button type="submit" asp-action="AddCart" asp-route-productId="@Model.ProductId" class="btn btn-success btn-lg col-lg-6">Sepete Ekle</button>
+                    <button type="submit" asp-action="Cancel" class="btn btn-warning btn-lg col-lg-6">İptal</button>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
