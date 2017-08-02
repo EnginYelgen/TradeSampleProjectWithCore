@@ -11,9 +11,9 @@ using Microsoft.AspNetCore.Identity;
 
 namespace TradeSampleProjectWithCore.Controllers
 {
-    public class RegisterController : Controller
+    public class RegisterController : BaseClasses.BaseController
     {
-        private readonly TradeSampleContext appContext;
+        //private readonly TradeSampleContext appContext;
         //private readonly UserManager<User> _userManager;
 
         //public RegisterController(
@@ -24,16 +24,18 @@ namespace TradeSampleProjectWithCore.Controllers
         //    this._userManager = userManager;
         //}
 
-        public RegisterController(TradeSampleContext context)
-        {
-            this.appContext = context;
-        }
+        //public RegisterController(TradeSampleContext context)
+        //{
+        //    this.appContext = context;
+        //}
 
         // GET: /<controller>/
-        public IActionResult Index()
-        {
-            return View();
-        }
+        //public IActionResult Index()
+        //{
+        //    return View();
+        //}
+
+        public RegisterController(TradeSampleContext context) : base(context) { }
 
         [HttpPost]
         [AllowAnonymous]
@@ -49,7 +51,7 @@ namespace TradeSampleProjectWithCore.Controllers
 
             if (ModelState.IsValid)
             {
-                if (appContext.Users.Any(x => x.MailAddress == model.Email))
+                if (this.DbContext.Users.Any(x => x.MailAddress == model.Email))
                 {
                     ViewData["Message"] = "Bu mail adresi kullanılıyor";
                 }
@@ -57,7 +59,7 @@ namespace TradeSampleProjectWithCore.Controllers
                 {
                     string hashedPass = Common.Security.GetHashed(model.Password);
 
-                    appContext.Users.Add(new Models.User
+                    this.DbContext.Users.Add(new Models.User
                     {
                         Name = model.Name,
                         Surname = model.Surname,
@@ -71,7 +73,7 @@ namespace TradeSampleProjectWithCore.Controllers
 
                     try
                     {
-                        appContext.SaveChanges();
+                        this.DbContext.SaveChanges();
 
                         return RedirectToAction("Login", "Account");
 

@@ -10,9 +10,8 @@ using System.Security.Claims;
 
 namespace TradeSampleProjectWithCore.Controllers
 {
-    public class AccountController : Controller
+    public class AccountController : BaseClasses.BaseController
     {
-        private readonly TradeSampleContext _context;
         //private readonly UserManager<User> _userManager;
         //private readonly SignInManager<User> _signInManager;
 
@@ -25,10 +24,8 @@ namespace TradeSampleProjectWithCore.Controllers
         //    this._userManager = userManager;
         //    this._signInManager = signInManager;
         //}
-        public AccountController(TradeSampleContext context)
-        {
-            this._context = context;
-        }
+
+        public AccountController(TradeSampleContext context) : base(context) { }
 
         [HttpPost]
         [AllowAnonymous]
@@ -66,9 +63,9 @@ namespace TradeSampleProjectWithCore.Controllers
 
             if (listClaim.Count > 0)
             {
-                if (_context.Users.Any(x => x.MailAddress == listClaim[0].Value))
+                if (this.DbContext.Users.Any(x => x.MailAddress == listClaim[0].Value))
                 {
-                    User loginUser = _context.Users.Where(x => x.MailAddress == listClaim[0].Value).Single();
+                    User loginUser = this.DbContext.Users.Where(x => x.MailAddress == listClaim[0].Value).Single();
 
                     if (loginUser.Password == listClaim[1].Value)
                     {
@@ -91,9 +88,9 @@ namespace TradeSampleProjectWithCore.Controllers
             {
                 string hashedPass = Common.Security.GetHashed(model.Password);
 
-                if (_context.Users.Any(x => x.MailAddress == model.Email))
+                if (this.DbContext.Users.Any(x => x.MailAddress == model.Email))
                 {
-                    User loginUser = _context.Users.Where(x => x.MailAddress == model.Email).Single();
+                    User loginUser = this.DbContext.Users.Where(x => x.MailAddress == model.Email).Single();
 
                     if (loginUser.Password == hashedPass)
                     {
@@ -101,7 +98,8 @@ namespace TradeSampleProjectWithCore.Controllers
                         {
                             new Claim(ClaimTypes.Authentication, model.Email),
                             new Claim(ClaimTypes.Authentication, hashedPass),
-                            new Claim(ClaimTypes.Authentication, loginUser.Name + " " + loginUser.Surname)
+                            new Claim(ClaimTypes.Authentication, loginUser.Name + " " + loginUser.Surname),
+                            new Claim(ClaimTypes.Authentication, loginUser.Id.ToString())
                         };
 
                         ClaimsIdentity userIdentity = new ClaimsIdentity(claims, "login");

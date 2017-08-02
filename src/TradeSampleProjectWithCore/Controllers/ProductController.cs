@@ -12,47 +12,21 @@ using Microsoft.AspNetCore.Routing;
 namespace TradeSampleProjectWithCore.Controllers
 {
     [Authorize]
-    public class ProductController : Controller
+    public class ProductController : BaseClasses.BaseController
     {
-        private readonly TradeSampleContext _context;
-
-        public ProductController(TradeSampleContext context)
-        {
-            this._context = context;
-        }
+        public ProductController(TradeSampleContext context) : base(context) { }
 
         // GET: /<controller>/
         public IActionResult List()
         {
-            return View(_context.Products.Select(x => new ViewModelProduct
-            {
-                ProductId = x.Id,
-                Name = x.Name,
-                StockCode = x.StockCode,
-                StockNumber = x.StockNumber,
-                Description = x.Description,
-                Image = x.Image,
-                UnitPrice = x.UnitPrice,
-                ProductCategory = new ViewModelProductCategory { ProductCategoryId = x.ProductCategory.Id, Name = x.ProductCategory.Name, Description = x.ProductCategory.Description }
-            }).ToList());
+            return View(new DataService.Product(this.DbContext).GetProducts());
         }
 
         public IActionResult Detail(int? productId)
         {
             if (productId > 0)
             {
-                return View(
-                    _context.Products.Where(x => x.Id == productId).Select(x => new ViewModelProduct
-                    {
-                        ProductId = x.Id,
-                        Name = x.Name,
-                        StockCode = x.StockCode,
-                        StockNumber = x.StockNumber,
-                        Description = x.Description,
-                        Image = x.Image,
-                        UnitPrice = x.UnitPrice,
-                        ProductCategory = new ViewModelProductCategory { ProductCategoryId = x.ProductCategory.Id, Name = x.ProductCategory.Name, Description = x.ProductCategory.Description }
-                    }).Single());
+                return View(new DataService.Product(this.DbContext).GetProducts(productId).Single());
             }
             else
             {

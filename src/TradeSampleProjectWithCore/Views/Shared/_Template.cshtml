@@ -7,20 +7,20 @@
     <script src="~/Library/js/jquery-3.2.1.min.js"></script>
     <script src="~/Library/js/bootstrap.js"></script>
     <script type="text/javascript">
-        function LogOff() {
-            $.ajax({
-                type: "POST",
-                url: "/Account/LogOff",
-                //dataType: "json",
-                dataType: "html",
-                contentType: "application/json",
-                success: function (data) {
-                    alert('success: ' + data);
-                },
-                error: function (data) {
-                    alert('error: ' + data.statusText);
-                }
-            });
+        //function LogOff() {
+        //    $.ajax({
+        //        type: "POST",
+        //        url: "/Account/LogOff",
+        //        //dataType: "json",
+        //        dataType: "html",
+        //        contentType: "application/json",
+        //        success: function (data) {
+        //            alert('success: ' + data);
+        //        },
+        //        error: function (data) {
+        //            alert('error: ' + data.statusText);
+        //        }
+        //    });
         }
     </script>
 
@@ -31,12 +31,25 @@
     <nav class="navbar navbar-inverse">
         <div class="container-fluid">
             <ul class="nav navbar-nav">
-                <li class="active"><a asp-controller="Home" asp-action="Index">Ana Sayfa</a></li>
-                <li><a href="#">Hakkımızda</a></li>
-                <li><a onclick="LogOff()">Çıkış</a></li>
+                <li>@Html.ActionLink("Ana Sayfa", "Index", "Home")</li>
+                <li>@Html.ActionLink("Hakkımızda", "About", "Home")</li>
+                <li>@Html.ActionLink("Ürünler", "Products", "Home")</li>
+                <li>@Html.ActionLink("Çıkış", "LogOff", "Home")</li>
+                <li><a asp-controller="Home" asp-action="Cart"><span class="glyphicon glyphicon-shopping-cart" style="margin-right:5px;"></span><span class="badge">@ViewData["ShoppingItemCount"]</span></a></li>
+                <li><a href="#">Wellcome @ViewData["LogInUserName"]</a></li>
             </ul>
         </div>
     </nav>
+
+    @*<nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a asp-controller="Home" asp-action="Index">Ana Sayfa</a></li>
+                    <li><a href="#">Hakkımızda</a></li>
+                    <li><a onclick="LogOff()">Çıkış</a></li>
+                </ul>
+            </div>
+        </nav>*@
 
     @*<nav class="navbar navbar-inverse">
             <div class="container-fluid">
