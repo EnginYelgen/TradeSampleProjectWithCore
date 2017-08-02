@@ -25,9 +25,9 @@ namespace TradeSampleProjectWithCore.BaseClasses
             get { return ViewData["LogInUserName"].ToString(); }
             set { ViewData["LogInUserName"] = value; }
         }
-        public string LogInUserId
+        public int LogInUserId
         {
-            get { return ViewData["LogInUserId"].ToString(); }
+            get { return Convert.ToInt32(ViewData["LogInUserId"]); }
             set { ViewData["LogInUserId"] = value; }
         }
         public int ShoppingItemCount
@@ -46,22 +46,22 @@ namespace TradeSampleProjectWithCore.BaseClasses
             return View();
         }
 
-        public override void OnActionExecuted(ActionExecutedContext filterContext)
+        public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            base.OnActionExecuted(filterContext);
+            base.OnActionExecuting(filterContext);
 
             ReadCookie();
 
-            if (!string.IsNullOrEmpty(LogInUserId))
+            if (LogInUserId > 0)
             {
-                ShoppingItemCount = new DataService.Order(this.DbContext).GetCartItemCount(Convert.ToInt32(LogInUserId));
+                ShoppingItemCount = new DataService.Order(this.DbContext).GetCartItemCount(LogInUserId);
             }
         }
 
         private void ReadCookie()
         {
-            LogInMailAddress = LogInUserName = LogInUserId = string.Empty;
-            ShoppingItemCount = 0;
+            LogInMailAddress = LogInUserName = string.Empty;
+            ShoppingItemCount = LogInUserId = 0;
 
             ClaimsPrincipal loggedInUser = HttpContext.User;
             List<Claim> listClaim = loggedInUser.Claims.ToList();
@@ -70,7 +70,7 @@ namespace TradeSampleProjectWithCore.BaseClasses
             {
                 LogInMailAddress = listClaim[0].Value; // mail address
                 LogInUserName = listClaim[2].Value; // user name
-                LogInUserId = listClaim[3].Value; // user id
+                LogInUserId = Convert.ToInt32(listClaim[3].Value); // user id
             }
         }
     }

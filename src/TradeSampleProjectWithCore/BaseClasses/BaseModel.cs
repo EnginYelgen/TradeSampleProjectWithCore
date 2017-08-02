@@ -8,7 +8,7 @@ using TradeSampleProjectWithCore.Models;
 
 namespace TradeSampleProjectWithCore.BaseClasses
 {
-    public class BaseModel
+    public class BaseModel 
     {
         [Key]
         public int Id { get; set; }

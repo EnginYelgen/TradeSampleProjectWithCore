@@ -12,5 +12,31 @@ namespace TradeSampleProjectWithCore.Controllers
     public class OrderController : BaseClasses.BaseController
     {
         public OrderController(TradeSampleContext context) : base(context) { }
+
+        public IActionResult Cart()
+        {
+            return View(new DataService.Order(this.DbContext).GetCartItems(this.LogInUserId));
+        }
+
+        public IActionResult Delete(int? detailId)
+        {
+            if (detailId > 0)
+            {
+                
+            }
+
+            return RedirectToAction("Cart");
+        }
+
+        public IActionResult CompletePurchase()
+        {
+
+            return RedirectToAction("Cart");
+        }
+
+        public IActionResult Cancel()
+        {
+            return RedirectToAction("List", "Product");
+        }
     }
 }

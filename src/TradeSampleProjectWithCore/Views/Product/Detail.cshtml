@@ -1,6 +1,5 @@
 ﻿@model TradeSampleProjectWithCore.Models.ViewModelProduct
 @{
-    //Layout = "_Layout";
     Layout = "_Template";
     ViewData["Title"] = "Ürün Detayı";
 }
@@ -34,7 +33,11 @@
                     <input asp-for="Description" class="form-control input-lg" readonly="readonly" />
                 </div>
                 <div class="form-group">
-                    <button type="submit" asp-action="AddCart" asp-route-productId="@Model.ProductId" class="btn btn-success btn-lg col-lg-6">Sepete Ekle</button>
+                    @if (@Model.StockNumber > 0)
+                    {
+                        <button type="submit" asp-action="AddCart" asp-route-productId="@Model.ProductId" class="btn btn-success btn-lg col-lg-6">Sepete Ekle</button>
+                    }
+
                     <button type="submit" asp-action="Cancel" class="btn btn-warning btn-lg col-lg-6">İptal</button>
                 </div>
             </form>

@@ -22,10 +22,12 @@ namespace TradeSampleProjectWithCore.Controllers
             return View(new DataService.Product(this.DbContext).GetProducts());
         }
 
-        public IActionResult Detail(int? productId)
+        public IActionResult Detail(int? productId, string message)
         {
             if (productId > 0)
             {
+                ViewBag.Message = message;
+
                 return View(new DataService.Product(this.DbContext).GetProducts(productId).Single());
             }
             else
@@ -39,7 +41,17 @@ namespace TradeSampleProjectWithCore.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult AddCart(int? productId)
         {
-            return RedirectToAction("Detail", "Product", new { productId = productId });
+            string errMess = string.Empty;
+
+            if (productId > 0)
+            {
+                if (new DataService.Order(this.DbContext).AddCart(this.LogInUserId, (int)productId, ref errMess))
+                {
+                    return RedirectToAction("List", "Product");
+                }
+            }
+
+            return RedirectToAction("Detail", "Product", new { productId = productId, message = errMess });
         }
 
         [HttpPost]
