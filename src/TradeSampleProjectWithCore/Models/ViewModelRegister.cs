@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TradeSampleProjectWithCore.Models
 {
-    public class Register
+    public class ViewModelRegister
     {
         [Display(Name = "E-Posta Adresi")]
         [DataType(DataType.EmailAddress, ErrorMessage = "Geçersiz e-posta formatı")]

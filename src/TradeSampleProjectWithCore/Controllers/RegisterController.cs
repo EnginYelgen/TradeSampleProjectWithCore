@@ -40,7 +40,7 @@ namespace TradeSampleProjectWithCore.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public IActionResult Save(Register model, string returnUrl = null)
+        public IActionResult Save(ViewModelRegister model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
 

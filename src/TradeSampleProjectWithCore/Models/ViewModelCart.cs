@@ -31,5 +31,11 @@ namespace TradeSampleProjectWithCore.Models
 
         [Display(Name = "Sipariş Adeti")]
         public int NumberOfProduct { get; set; }
+
+        [Display(Name = "Toplam Tutar")]
+        public decimal Total
+        {
+            get { return this.ProductUnitPrice * this.NumberOfProduct; }
+        }
     }
 }

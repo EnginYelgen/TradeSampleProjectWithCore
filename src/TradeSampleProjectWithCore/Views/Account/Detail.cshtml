@@ -1,0 +1,153 @@
+﻿@model TradeSampleProjectWithCore.Models.ViewModelAccountDetail
+@{
+    Layout = "_Template";
+    ViewData["Title"] = "Hesabım";
+}
+
+<div class="row">
+    <div class="col-md-4 col-md-offset-4">
+        <section class="table-bordered" style="margin:20px; padding:10px;">
+            <form asp-controller="Account" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
+                <h4>Şifre Değiştir</h4>
+                <hr />
+                <div class="form-group">
+                    <label asp-for="ChangePassword.CurrentPassword"></label>
+                    <input asp-for="ChangePassword.CurrentPassword" class="form-control input-lg" />
+                    <span asp-validation-for="ChangePassword.CurrentPassword" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ChangePassword.NewPassword"></label>
+                    <input asp-for="ChangePassword.NewPassword" class="form-control input-lg" />
+                    <span asp-validation-for="ChangePassword.NewPassword" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ChangePassword.NewConfirmPassword"></label>
+                    <input asp-for="ChangePassword.NewConfirmPassword" class="form-control input-lg" />
+                    <span asp-validation-for="ChangePassword.NewConfirmPassword" class="text-danger"></span>
+                </div>
+                <div class="text-danger" style="font-weight:bold; padding-bottom:4px;padding-top:4px;">
+                    @ViewData["Message"]
+                </div>
+                <div class="form-group text-right">
+                    <button type="submit" asp-action="ChangePassword" class="btn btn-success">Şifreyi Değiştir</button>
+                </div>
+            </form>
+        </section>
+        <section class="table-bordered" style="margin:20px;padding:10px;">
+            <form asp-controller="Account" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
+                <h4>Yeni Adres</h4>
+                <hr />
+                <div class="form-group">
+                    <label asp-for="NewAddress.Street"></label>
+                    <input asp-for="NewAddress.Street" class="form-control input-lg" />
+                    <span asp-validation-for="NewAddress.Street" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NewAddress.Number"></label>
+                    <input asp-for="NewAddress.Number" class="form-control input-lg" />
+                    <span asp-validation-for="NewAddress.Number" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="CityList"></label>
+                    <select asp-for="NewAddress.CityId" asp-items="@Model.CityList" class="form-control"></select>
+                    <span asp-validation-for="CityList" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="CountryList"></label>
+                    <select asp-for="NewAddress.CountryId" asp-items="@Model.CountryList" class="form-control"></select>
+                    <span asp-validation-for="CountryList" class="text-danger"></span>
+                </div>
+                @*<div class="form-group">
+                    <label asp-for="NewAddress.CityList"></label>
+                    <select asp-for="NewAddress.CityId" asp-items="@Model.NewAddress.CityList"></select>
+                    <span asp-validation-for="NewAddress.CityList" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NewAddress.CountryList"></label>
+                    <select asp-for="NewAddress.CountryId" asp-items="@Model.NewAddress.CountryList"></select>
+                    <span asp-validation-for="NewAddress.CountryList" class="text-danger"></span>
+                </div>*@
+                <div class="form-group">
+                    <label asp-for="NewAddress.PostCode"></label>
+                    <input asp-for="NewAddress.PostCode" class="form-control input-lg" />
+                    <span asp-validation-for="NewAddress.PostCode" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NewAddress.Description"></label>
+                    <input asp-for="NewAddress.Description" class="form-control input-lg" />
+                    <span asp-validation-for="NewAddress.Description" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NewAddress.InUse"></label>
+                    <input asp-for="NewAddress.InUse" class="checkbox" checked="checked" />
+                    <span asp-validation-for="NewAddress.InUse" class="text-danger"></span>
+                </div>
+                <div class="text-danger" style="font-weight:bold; padding-bottom:4px;padding-top:4px;">
+                    @ViewData["Message"]
+                </div>
+                <div class="form-group text-right">
+                    <button type="submit" asp-action="SaveAddress" class="btn btn-success">Adresi kaydet</button>
+                </div>
+            </form>
+        </section>
+        <section class="table-bordered" style="margin:20px;padding:10px;">
+            <form asp-controller="Account" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
+                <h4>Adreslerim</h4>
+                <hr />
+                <div class="form-group">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>
+                                </th>
+                                <th>
+                                </th>
+                                <th>
+                                </th>
+                                <th>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.AddressList)
+                            {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.InUse)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Street)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Number)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.CityName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.CountryName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.PostCode)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Description)
+                                </td>
+                                <td>
+                                    <a asp-action="DeleteAddress" asp-route-productId="@item.AddressId">Sil</a>
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-danger" style="font-weight:bold; padding-bottom:4px;padding-top:4px;">
+                    @ViewData["Message"]
+                </div>
+                <div class="form-group text-right">
+                    <button type="submit" asp-action="ChangeActiveAddress" class="btn btn-success">Değişikliği kaydet</button>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>

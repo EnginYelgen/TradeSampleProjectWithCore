@@ -80,7 +80,7 @@ namespace TradeSampleProjectWithCore.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(Login model, string returnUrl = null)
+        public async Task<IActionResult> Login(ViewModelLogin model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
 
@@ -143,6 +143,92 @@ namespace TradeSampleProjectWithCore.Controllers
             await HttpContext.Authentication.SignOutAsync("CookieAuthentication");
 
             return RedirectToAction("Login", "Account");
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult Detail(string returnUrl = "/")
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+            return View(new DataService.Account(this.DbContext).GetAccountDetail(this.LogInUserId));
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ViewModelAccountDetail model, string returnUrl = null)
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+
+            if (ModelState.IsValid)
+            {
+                User loginUser = this.DbContext.Users.Where(x => x.Id == this.LogInUserId).Single();
+
+                string hashedPassOld = Common.Security.GetHashed(model.ChangePassword.CurrentPassword);
+
+                if (loginUser.Password != hashedPassOld)
+                {
+                    ViewData["Message"] = "Şifre yanlış";
+                }
+                else
+                {
+                    string hashedPass = Common.Security.GetHashed(model.ChangePassword.NewPassword);
+
+                    loginUser.Password = hashedPass;
+
+                    this.DbContext.SaveChanges();
+
+                    await HttpContext.Authentication.SignOutAsync("CookieAuthentication");
+
+                    return RedirectToAction("Login");
+                }
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public IActionResult SaveAddress(ViewModelAccountDetail model, string returnUrl = null)
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+
+            if (ModelState.IsValid)
+            {
+                this.DbContext.Addresses.Add(new Address
+                {
+                    CityId = model.NewAddress.CityId,
+                    CountryId = model.NewAddress.CityId,
+                    Description = model.NewAddress.Description,
+                    InUse = model.NewAddress.InUse,
+                    No = model.NewAddress.Number,
+                    Street = model.NewAddress.Street,
+                    PostCode = model.NewAddress.PostCode,
+                    UpdateDate = DateTime.Now,
+                    UpdateUserId = this.LogInUserId,
+                    UserId = this.LogInUserId
+                });
+
+                this.DbContext.SaveChanges();
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public IActionResult ChangeActiveAddress(ViewModelAccountDetail model, string returnUrl = null)
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+
+            if (ModelState.IsValid)
+            {
+
+            }
+
+            return View(model);
         }
     }
 }

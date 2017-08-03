@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<TradeSampleProjectWithCore.Models.ViewModelCart>
 @{
     Layout = "_Template";
-    ViewData["Title"] = "Sepetim";
+    ViewData["Title"] = "Siparişi Tamamla";
 }
 
 <div class="col-lg-12" style="padding:10px;">
@@ -10,21 +10,17 @@
             <thead>
                 <tr>
                     <th>
-                        @Html.DisplayNameFor(model => model.ProductImage)
-                    </th>
-                    <th>
                         @Html.DisplayNameFor(model => model.ProductName)
                     </th>
                     <th>
                         @Html.DisplayNameFor(model => model.ProductDescription)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.ProductUnitPrice)
-                    </th>
-                    <th>
                         @Html.DisplayNameFor(model => model.NumberOfProduct)
                     </th>
-                    <th></th>
+                    <th>
+                        Toplam
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -32,27 +28,25 @@
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.ProductImage)
-                    </td>
-                    <td>
                         @Html.DisplayFor(modelItem => item.ProductName)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.ProductDescription)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.ProductUnitPrice)
-                    </td>
-                    <td>
                         @Html.DisplayFor(modelItem => item.NumberOfProduct)
                     </td>
                     <td>
-                        <a asp-action="Delete" asp-route-detailId="@item.ShoppingCartDetailId">Sil</a>
+                        @Html.DisplayFor(modelItem => item.Total)
                     </td>
                 </tr>
-                    }
+                }
             </tbody>
         </table>
+
+        <div>
+
+        </div>
     </div>
 
     <div class="col-lg-2 col-lg-offset-1 table-bordered text-right" style="padding:5px;">
@@ -60,25 +54,10 @@
         <h6>@Model.Count() ürün</h6>
         <h5>Ödenecek Tutar</h5>
         <h6>@Model.Sum(modelItem => modelItem.ProductUnitPrice * modelItem.NumberOfProduct) TL</h6>
-        <a asp-action="Next" class="btn btn-lg btn-success">Alışverişi Tamamla <span class="glyphicon glyphicon-triangle-right"></span></a>
+        <a asp-action="Complete" class="btn btn-lg btn-success">Siparişi Onayla <span class="glyphicon glyphicon-triangle-right"></span></a>
     </div>
 
     <div>
         <a asp-action="Cancel" class="btn btn-lg btn-warning"><span class="glyphicon glyphicon-triangle-left"></span> Alışverişe Devam Et</a>
     </div>
 </div>
-
-
-
-
-@*<div class="col-lg-3">
-        <div class="row" style="padding:5px;font-weight:bold;">
-            Toplam Tutar: @Model.Sum(modelItem => modelItem.ProductUnitPrice * modelItem.NumberOfProduct)
-        </div>
-        <div class="row" style="padding:5px;">
-            <a asp-action="CompletePurchase" class="btn btn-lg btn-success col-lg-6">Alışverişi Tamamla</a>
-        </div>
-        <div class="row" style="padding:5px;">
-            <a asp-action="Cancel" class="btn btn-lg btn-warning col-lg-6">Alışverişe Devam Et</a>
-        </div>
-    </div>*@

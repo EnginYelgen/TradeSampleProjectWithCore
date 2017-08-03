@@ -18,6 +18,16 @@ namespace TradeSampleProjectWithCore.Controllers
             return View(new DataService.Order(this.DbContext).GetCartItems(this.LogInUserId));
         }
 
+        public IActionResult CompletePurchase()
+        {
+            return View(new DataService.Order(this.DbContext).GetCartItems(this.LogInUserId));
+        }
+
+        public IActionResult History()
+        {
+            return View();
+        }
+
         public IActionResult Delete(int? detailId)
         {
             if (detailId > 0)
@@ -28,10 +38,21 @@ namespace TradeSampleProjectWithCore.Controllers
             return RedirectToAction("Cart");
         }
 
-        public IActionResult CompletePurchase()
+        public IActionResult Next()
         {
+            return RedirectToAction("CompletePurchase");
+        }
 
-            return RedirectToAction("Cart");
+        public IActionResult Complete()
+        {
+            if (true)
+            {
+                return RedirectToAction("List", "Product");
+            }
+            else
+            {
+                return RedirectToAction("Cart");
+            }
         }
 
         public IActionResult Cancel()
