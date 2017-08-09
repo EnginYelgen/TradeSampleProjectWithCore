@@ -13,12 +13,6 @@ namespace TradeSampleProjectWithCore.Models
 
         public ViewModelAddress NewAddress { get; set; }
 
-        public ICollection<ViewModelAddress> AddressList { get; set; }
-
-        [Display(Name = "Şehir")]
-        public SelectList CityList { get; set; }
-
-        [Display(Name = "Ülke")]
-        public SelectList CountryList { get; set; }
+        public IEnumerable<ViewModelAddress> AddressList { get; set; }
     }
 }

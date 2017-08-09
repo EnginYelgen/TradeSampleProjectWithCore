@@ -15,10 +15,18 @@ namespace TradeSampleProjectWithCore.Models
 
         public int CityId { get; set; }
 
+        [Display(Name = "Adres İsmi")]
+        [DataType(DataType.Text)]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Gerekli alan")]
+        [StringLength(200, ErrorMessage = "Maksimum uzunluk {0} karakterdir.")]
+        public string AddressName { get; set; }
+
+        [Display(Name = "Şehir")]
         public string CityName { get; set; }
 
         public int CountryId { get; set; }
 
+        [Display(Name = "Ülke")]
         public string CountryName { get; set; }
 
         [Display(Name = "Numara")]
@@ -47,12 +55,6 @@ namespace TradeSampleProjectWithCore.Models
         [Required(ErrorMessage = "Gerekli alan")]
         public bool InUse { get; set; }
 
-        //[Display(Name = "Şehir")]
-        //[Required(ErrorMessage = "Gerekli alan")]
-        //public SelectList CityList { get; set; }
-
-        //[Display(Name = "Ülke")]
-        //[Required(ErrorMessage = "Gerekli alan")]
-        //public SelectList CountryList { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

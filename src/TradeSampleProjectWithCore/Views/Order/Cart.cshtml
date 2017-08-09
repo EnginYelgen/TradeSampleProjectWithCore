@@ -1,11 +1,12 @@
-﻿@model IEnumerable<TradeSampleProjectWithCore.Models.ViewModelCart>
+﻿@model IEnumerable<TradeSampleProjectWithCore.Models.ViewModelCartItem>
 @{
     Layout = "_Template";
     ViewData["Title"] = "Sepetim";
 }
 
 <div class="col-lg-12" style="padding:10px;">
-    <div class="col-lg-9 table-bordered" style="padding:5px;">
+    <div class="col-lg-9">
+        <h3 class="bg-primary">Ürünler</h3>
         <table class="table">
             <thead>
                 <tr>
@@ -55,30 +56,15 @@
         </table>
     </div>
 
-    <div class="col-lg-2 col-lg-offset-1 table-bordered text-right" style="padding:5px;">
-        <h3>Sipariş Özeti</h3>
+    <div class="col-lg-2 col-lg-offset-1 text-right">
+        <h3 class="bg-primary">Sipariş Özeti</h3>
         <h6>@Model.Count() ürün</h6>
         <h5>Ödenecek Tutar</h5>
-        <h6>@Model.Sum(modelItem => modelItem.ProductUnitPrice * modelItem.NumberOfProduct) TL</h6>
+        <h6>@Model.Sum(modelItem => modelItem.Total) TL</h6>
         <a asp-action="Next" class="btn btn-lg btn-success">Alışverişi Tamamla <span class="glyphicon glyphicon-triangle-right"></span></a>
     </div>
 
-    <div>
+    <div class="col-lg-9">
         <a asp-action="Cancel" class="btn btn-lg btn-warning"><span class="glyphicon glyphicon-triangle-left"></span> Alışverişe Devam Et</a>
     </div>
 </div>
-
-
-
-
-@*<div class="col-lg-3">
-        <div class="row" style="padding:5px;font-weight:bold;">
-            Toplam Tutar: @Model.Sum(modelItem => modelItem.ProductUnitPrice * modelItem.NumberOfProduct)
-        </div>
-        <div class="row" style="padding:5px;">
-            <a asp-action="CompletePurchase" class="btn btn-lg btn-success col-lg-6">Alışverişi Tamamla</a>
-        </div>
-        <div class="row" style="padding:5px;">
-            <a asp-action="Cancel" class="btn btn-lg btn-warning col-lg-6">Alışverişe Devam Et</a>
-        </div>
-    </div>*@

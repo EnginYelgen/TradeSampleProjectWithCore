@@ -1,0 +1,134 @@
+﻿@model IEnumerable<TradeSampleProjectWithCore.Models.ViewModelAddress>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#formChangeActiveAddress input[type=checkbox]").on("change", function () {
+            var val = this.checked;
+
+            if (val) {
+                $("#formChangeActiveAddress input[type=checkbox]").each(function () {
+                    this.checked = false;
+                });
+
+                this.checked = val;
+            }
+            else {
+                this.checked = !val;
+            }
+        });
+
+        $("#buttonTest").on("click", function () {
+            var addressList = [];
+
+            $("#formChangeActiveAddress input[type=checkbox]").each(function () {
+                addressList.push({ Key: $(this).attr("data-addressId"), Value: this.checked });
+            });
+
+            if (addressList.length > 0) {
+                var postData = { data: addressList };
+
+                $.ajax({
+                    type: 'POST',
+                    url: 'ChangeActiveAddress',
+                    dataType: 'json',
+                    data: postData,
+                    success: function (data) {
+                        console.log('Success: ');
+                        console.log(data);
+
+                        //alert(data.msgCode + "\n" + data.msgDetail);
+                        alert(data.msgDetail);
+                    },
+                    error: function (data) {
+                        console.log('Error: ');
+                        console.log(data);
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+<form asp-controller="Account" method="post" id="formChangeActiveAddress">
+    <h4>Adreslerim</h4>
+    <hr />
+    <div class="form-group">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.InUse)</th>
+                    <th>@Html.DisplayNameFor(model => model.AddressName)</th>
+                    <th>@Html.DisplayNameFor(model => model.Street)</th>
+                    <th>@Html.DisplayNameFor(model => model.Number)</th>
+                    <th>@Html.DisplayNameFor(model => model.CityName)</th>
+                    <th>@Html.DisplayNameFor(model => model.CountryName)</th>
+                    <th>@Html.DisplayNameFor(model => model.PostCode)</th>
+                    <th>@Html.DisplayNameFor(model => model.Description)</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <input asp-for="@item.InUse" data-addressId="@item.AddressId" />
+                        </td>
+                        @*<td>
+                                <input asp-for="@item.Street" />
+                            </td>
+                            <td>
+                                <input asp-for="@item.Number" />
+                            </td>
+                            <td>
+                                <input asp-for="@item.CityName" />
+                            </td>
+                            <td>
+                                <input asp-for="@item.CountryName" />
+                            </td>
+                            <td>
+                                <input asp-for="@item.PostCode" />
+                            </td>
+                            <td>
+                                <input asp-for="@item.Description" />
+                            </td>*@
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AddressName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Street)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Number)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CityName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CountryName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PostCode)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Description)
+                        </td>
+                        <td>
+                            <button type="submit" class="btn" asp-action="DeleteAddress" asp-route-addressId="@item.AddressId">
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </button>
+                            @*<a asp-action="DeleteAddress" asp-route-addressId="@item.AddressId">Sil</a>*@
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="text-danger" style="font-weight:bold; padding-bottom:4px;padding-top:4px;">
+        @ViewData["Message_ViewModelAddressList"]
+    </div>
+    <div class="form-group text-right">
+        <button type="button" id="buttonTest" class="btn btn-success" style="min-width:150px;">Değişikliği kaydet</button>
+        @*<button type="submit" class="btn btn-success" asp-action="ChangeActiveAddress">Değişikliği kaydet</button>*@
+    </div>
+</form>

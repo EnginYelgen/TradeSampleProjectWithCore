@@ -11,19 +11,31 @@ namespace TradeSampleProjectWithCore.DataService
     {
         public DropdownList(TradeSampleContext context) : base(context) { }
 
-        public SelectList GetCountryList(object selectedValue = null)
+        public SelectList GetCountryList(object selectedValue = null, bool hasEmptyItem = false)
         {
+            var list = this.DbContext.Countries.Select(x => new { x.Id, x.Name }).ToList();
+            if (hasEmptyItem)
+            {
+                list.Insert(0, new { Id = 0, Name = "" });
+            }
+
             return new SelectList(
-                this.DbContext.Countries.Select(x => new { x.Id, x.Name }).ToList(),
+                list,
                 "Id",
                 "Name",
                 selectedValue);
         }
 
-        public SelectList GetCityList(int countryId, object selectedValue = null)
+        public SelectList GetCityList(int countryId, object selectedValue = null, bool hasEmptyItem = false)
         {
+            var list = this.DbContext.Cities.Where(x => x.CountryId == countryId).Select(x => new { x.Id, x.Name }).ToList();
+            if (hasEmptyItem)
+            {
+                list.Insert(0, new { Id = 0, Name = "" });
+            }
+
             return new SelectList(
-                this.DbContext.Cities.Where(x => x.CountryId == countryId).Select(x => new { x.Id, x.Name }).ToList(),
+                list,
                 "Id",
                 "Name",
                 selectedValue);

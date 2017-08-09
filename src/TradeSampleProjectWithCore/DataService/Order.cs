@@ -11,7 +11,7 @@ namespace TradeSampleProjectWithCore.DataService
     {
         public Order(TradeSampleContext context) : base(context) { }
 
-        public List<ViewModelCart> GetCartItems(int userId)
+        public List<ViewModelCartItem> GetCartItems(int userId)
         {
             int cartId = this.DbContext.ShoppingCarts.SingleOrDefault(x => x.UserId == userId && x.InUse).Id;
 
@@ -19,7 +19,7 @@ namespace TradeSampleProjectWithCore.DataService
             {
                 return this.DbContext.ShoppingCartDetails
                     .Where(x => x.ShoppingCartId == cartId)
-                    .Select(x => new ViewModelCart
+                    .Select(x => new ViewModelCartItem
                     {
                         ShoppingCartId = x.ShoppingCartId,
                         ShoppingCartDetailId = x.Id,
@@ -34,8 +34,17 @@ namespace TradeSampleProjectWithCore.DataService
             }
             else
             {
-                return new List<ViewModelCart>();
+                return new List<ViewModelCartItem>();
             }
+        }
+
+        public ViewModelCompletePurchase GetCompletePurchase(int userId)
+        {
+            return new ViewModelCompletePurchase
+            {
+                CartItemList = GetCartItems(userId),
+                AddressList = new Account(this.DbContext).GetAddressList(userId)
+            };
         }
 
         public int GetCartItemCount(int userId)
@@ -129,6 +138,57 @@ namespace TradeSampleProjectWithCore.DataService
             {
                 errMess = "Beklenmeyen hata!";
                 isSucc = false;
+            }
+
+            return isSucc;
+        }
+
+        public bool CompletePurchase(int userId, Models.Order order, ref string errMess)
+        {
+            bool isSucc = true;
+            errMess = string.Empty;
+
+            using (var transaction = this.DbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    this.DbContext.Orders.Add(new Models.Order
+                    {
+                        AddressId = order.AddressId,
+                        ApproveDate = DateTime.Now,
+                        InUse = true,
+                        IsApproved = true,
+                        IsDelivered = false,
+                        OrderDate = DateTime.Now,
+                        ShippingDate = DateTime.Now.AddDays(1),
+                        ShoppingCartId = order.ShoppingCartId,
+                        Total = order.Total,
+                        UpdateDate = DateTime.Now,
+                        UpdateUserId = userId
+                    });
+                    this.DbContext.SaveChanges();
+
+                    this.DbContext.ShoppingCarts.Where(x => x.Id == order.ShoppingCartId).Single().InUse = false;
+                    this.DbContext.SaveChanges();
+
+                    List<ShoppingCartDetail> listShoppingCartDetail = this.DbContext.ShoppingCartDetails.Where(x => x.ShoppingCartId == order.ShoppingCartId).ToList();
+
+                    Models.Product product;
+                    foreach (ShoppingCartDetail item in listShoppingCartDetail)
+                    {
+                        product = this.DbContext.Products.Where(x => x.Id == item.ProductId).Single();
+                        product.StockNumber = product.StockNumber - item.NumberOfProduct;
+                        this.DbContext.SaveChanges();
+                    }
+
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    errMess = "Beklenmeyen hata!";
+                    isSucc = false;
+                    transaction.Rollback();
+                }
             }
 
             return isSucc;

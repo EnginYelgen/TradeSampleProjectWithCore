@@ -27,5 +27,36 @@ namespace TradeSampleProjectWithCore.DataService
                 })
                 .ToList();
         }
+
+        public bool StockAvailable(int productId, int quantity)
+        {
+            return this.DbContext.Products.Where(x => x.Id == productId && x.InUse && x.StockNumber >= quantity).Any();
+        }
+
+        public bool ReduceStock(int productId, int quantity, ref string errMess)
+        {
+            bool isSucc = true;
+            errMess = string.Empty;
+
+            using (var transaction = this.DbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    Models.Product product = this.DbContext.Products.Where(x => x.Id == productId).Single();
+                    product.StockNumber = product.StockNumber - quantity;
+                    this.DbContext.SaveChanges();
+
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    errMess = "Beklenmeyen hata!";
+                    isSucc = false;
+                    transaction.Rollback();
+                }
+            }
+
+            return isSucc;
+        }
     }
 }

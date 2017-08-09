@@ -208,6 +208,9 @@ namespace TradeSampleProjectWithCore.Models
         //[Key]
         //public int Id { get; set; }
         [Required]
+        [MaxLength(200)]
+        public string AddressName { get; set; }
+        [Required]
         [MaxLength(100)]
         public string Street { get; set; }
         [Required]
@@ -218,8 +221,7 @@ namespace TradeSampleProjectWithCore.Models
         public string PostCode { get; set; }
         [MaxLength(500)]
         public string Description { get; set; }
-        //[Required]
-        //public bool InUse { get; set; }
+        public bool IsDeleted { get; set; }
         //[Required]
         //public DateTime UpdateDate { get; set; }
 
@@ -319,7 +321,7 @@ namespace TradeSampleProjectWithCore.Models
         public DateTime ApproveDate { get; set; }
         public DateTime ShippingDate { get; set; }
         public bool IsDelivered { get; set; }
-        public DateTime DeliveryDate { get; set; }
+        public DateTime? DeliveryDate { get; set; }
 
         [Required]
         public int AddressId { get; set; }

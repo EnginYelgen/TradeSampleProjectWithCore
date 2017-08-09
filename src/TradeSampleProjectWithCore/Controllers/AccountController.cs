@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Identity;
 using TradeSampleProjectWithCore.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using TradeSampleProjectWithCore.Common;
 
 namespace TradeSampleProjectWithCore.Controllers
 {
@@ -147,32 +149,76 @@ namespace TradeSampleProjectWithCore.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Detail(string returnUrl = "/")
+        public IActionResult Detail(string message, string messageKey)
         {
-            ViewData["ReturnUrl"] = returnUrl;
+            if (!string.IsNullOrEmpty(messageKey))
+            {
+                ViewData[messageKey] = message;
+            }
+
+            SelectList list = new DataService.DropdownList(this.DbContext).GetCountryList(hasEmptyItem: true);
+            ViewBag.CountryList = list;
+            list = new DataService.DropdownList(this.DbContext).GetCityList(0, hasEmptyItem: true);
+            ViewBag.CityList = list;
+
             return View(new DataService.Account(this.DbContext).GetAccountDetail(this.LogInUserId));
         }
 
+        //[HttpPost]
+        //[AllowAnonymous]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> ChangePassword(ViewModelChangePassword model, string returnUrl = null)
+        //{
+        //    ViewData["ReturnUrl"] = returnUrl;
+
+        //    if (ModelState.IsValid)
+        //    {
+        //        User loginUser = this.DbContext.Users.Where(x => x.Id == this.LogInUserId).Single();
+
+        //        string hashedPassOld = Common.Security.GetHashed(model.CurrentPassword);
+
+        //        if (loginUser.Password != hashedPassOld)
+        //        {
+        //            ViewData["Message"] = "Şifre yanlış";
+        //        }
+        //        else
+        //        {
+        //            string hashedPass = Common.Security.GetHashed(model.NewPassword);
+
+        //            loginUser.Password = hashedPass;
+
+        //            this.DbContext.SaveChanges();
+
+        //            await HttpContext.Authentication.SignOutAsync("CookieAuthentication");
+
+        //            return RedirectToAction("Login");
+        //        }
+        //    }
+
+        //    //return View(model);
+        //    //return View("Detail", model);
+        //    return RedirectToAction("Detail", new { hasModelChangePassword = true });
+        //}
+
         [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ChangePassword(ViewModelAccountDetail model, string returnUrl = null)
+        public async Task<IActionResult> ChangePassword(ViewModelChangePassword model)
         {
-            ViewData["ReturnUrl"] = returnUrl;
+            string errMess = string.Empty;
+            string errMessKey = "Message_ViewModelChangePassword";
 
             if (ModelState.IsValid)
             {
                 User loginUser = this.DbContext.Users.Where(x => x.Id == this.LogInUserId).Single();
 
-                string hashedPassOld = Common.Security.GetHashed(model.ChangePassword.CurrentPassword);
+                string hashedPassOld = Common.Security.GetHashed(model.CurrentPassword);
 
                 if (loginUser.Password != hashedPassOld)
                 {
-                    ViewData["Message"] = "Şifre yanlış";
+                    errMess = "Şifre yanlış";
                 }
                 else
                 {
-                    string hashedPass = Common.Security.GetHashed(model.ChangePassword.NewPassword);
+                    string hashedPass = Common.Security.GetHashed(model.NewPassword);
 
                     loginUser.Password = hashedPass;
 
@@ -180,55 +226,107 @@ namespace TradeSampleProjectWithCore.Controllers
 
                     await HttpContext.Authentication.SignOutAsync("CookieAuthentication");
 
+                    //return Json("OK");
+
                     return RedirectToAction("Login");
                 }
             }
 
-            return View(model);
+            //return View(model);
+            //return View("Detail", model);
+            //return RedirectToAction("Detail", new { hasModelChangePassword = true });
+            //return Json("ERROR");
+            return RedirectToAction("Detail", new { message = errMess, messageKey = errMessKey });
         }
 
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public IActionResult SaveAddress(ViewModelAccountDetail model, string returnUrl = null)
+        public IActionResult SaveAddress(ViewModelAddress model)
         {
-            ViewData["ReturnUrl"] = returnUrl;
+            string errMess = string.Empty;
+            string errMessKey = "Message_ViewModelAddress";
 
             if (ModelState.IsValid)
             {
-                this.DbContext.Addresses.Add(new Address
+                new DataService.Account(this.DbContext).SaveAddress(new Address
                 {
-                    CityId = model.NewAddress.CityId,
-                    CountryId = model.NewAddress.CityId,
-                    Description = model.NewAddress.Description,
-                    InUse = model.NewAddress.InUse,
-                    No = model.NewAddress.Number,
-                    Street = model.NewAddress.Street,
-                    PostCode = model.NewAddress.PostCode,
+                    AddressName = model.AddressName,
+                    CityId = model.CityId,
+                    CountryId = model.CountryId,
+                    Description = model.Description,
+                    InUse = model.InUse,
+                    No = model.Number,
+                    Street = model.Street,
+                    PostCode = model.PostCode,
                     UpdateDate = DateTime.Now,
                     UpdateUserId = this.LogInUserId,
                     UserId = this.LogInUserId
-                });
-
-                this.DbContext.SaveChanges();
+                },
+                out errMess);
             }
 
-            return View(model);
+            return RedirectToAction("Detail", new { message = errMess, messageKey = errMessKey });
+        }
+
+        //[HttpPost]
+        //[AllowAnonymous]
+        //[ValidateAntiForgeryToken]
+        //public IActionResult ChangeActiveAddress(IEnumerable<ViewModelAddress> modelList)
+        //{
+        //    string errMess = string.Empty;
+        //    string errMessKey = "Message_ViewModelAddressList";
+
+        //    if (ModelState.IsValid)
+        //    {
+        //        new DataService.Account(this.DbContext).SetActiveAddress(
+        //            modelList.Where(x => x.InUse).Single().AddressId,
+        //            this.LogInUserId,
+        //            out errMess);
+        //    }
+
+        //    return RedirectToAction("Detail", new { message = errMess, messageKey = errMessKey });
+        //}
+
+        [HttpPost]
+        public JsonResult ChangeActiveAddress(List<DataPair> data)
+        {
+            string errMess = string.Empty;
+            //string errMessKey = "Message_ViewModelAddressList";
+
+            if (ModelState.IsValid)
+            {
+                new DataService.Account(this.DbContext).SetActiveAddress(
+                    Convert.ToInt32(data.Where(x => Convert.ToBoolean(x.Value)).Single().Key),
+                    this.LogInUserId,
+                    out errMess);
+            }
+
+            return Json(new { msgCode = string.IsNullOrEmpty(errMess) ? "OK" : "ERROR", msgDetail = string.IsNullOrEmpty(errMess) ? "İşlem başarıyla gerçekleşti." : errMess });
         }
 
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public IActionResult ChangeActiveAddress(ViewModelAccountDetail model, string returnUrl = null)
+        public IActionResult DeleteAddress(int? addressId)
         {
-            ViewData["ReturnUrl"] = returnUrl;
+            string errMess = string.Empty;
+            string errMessKey = "Message_ViewModelAddressList";
 
-            if (ModelState.IsValid)
+            if (addressId > 0)
             {
-
+                new DataService.Account(this.DbContext).DeleteAddress(
+                    Convert.ToInt32(addressId),
+                    this.LogInUserId,
+                    out errMess);
             }
 
-            return View(model);
+            return RedirectToAction("Detail", new { message = errMess, messageKey = errMessKey });
+        }
+
+        public SelectList GetCity(int countryId)
+        {
+            return new DataService.DropdownList(this.DbContext).GetCityList(countryId, hasEmptyItem: true);
         }
     }
 }

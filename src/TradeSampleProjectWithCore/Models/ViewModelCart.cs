@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TradeSampleProjectWithCore.Models
 {
-    public class ViewModelCart
+    public class ViewModelCartItem
     {
         public int ShoppingCartId { get; set; }
 

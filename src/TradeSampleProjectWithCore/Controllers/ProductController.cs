@@ -15,7 +15,7 @@ namespace TradeSampleProjectWithCore.Controllers
     public class ProductController : BaseClasses.BaseController
     {
         public ProductController(TradeSampleContext context) : base(context) { }
-
+        
         // GET: /<controller>/
         public IActionResult List()
         {

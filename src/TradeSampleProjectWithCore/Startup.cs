@@ -10,7 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using TradeSampleProjectWithCore.Models;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
 
 namespace TradeSampleProjectWithCore
 {
@@ -84,6 +85,29 @@ namespace TradeSampleProjectWithCore
                     name: "default",
                     template: "{controller=Account}/{action=Login}/{id?}");
             });
+
+            //var supportedCultures = new[]
+            //{
+            //    new CultureInfo("en-US"),
+            //    new CultureInfo("en-AU"),
+            //    new CultureInfo("en-GB"),
+            //    new CultureInfo("en"),
+            //    new CultureInfo("es-ES"),
+            //    new CultureInfo("es-MX"),
+            //    new CultureInfo("es"),
+            //    new CultureInfo("fr-FR"),
+            //    new CultureInfo("fr"),
+            //    new CultureInfo("tr-TR")
+            //};
+
+            //app.UseRequestLocalization(new RequestLocalizationOptions
+            //{
+            //    DefaultRequestCulture = new RequestCulture("tr-TR"),
+            //    // Formatting numbers, dates, etc.
+            //    SupportedCultures = supportedCultures,
+            //    // UI strings that we have localized.
+            //    SupportedUICultures = supportedCultures
+            //});
 
             DbInitialize.Initialize(app.ApplicationServices.GetRequiredService<TradeSampleContext>());
         }
