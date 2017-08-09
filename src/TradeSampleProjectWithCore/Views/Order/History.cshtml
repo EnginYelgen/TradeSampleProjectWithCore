@@ -1,4 +1,78 @@
-﻿@{
+﻿@model IEnumerable<TradeSampleProjectWithCore.Models.ViewModelOrder>
+@{
     Layout = "_Template";
     ViewData["Title"] = "Siparişlerim";
 }
+
+<div class="col-lg-8 col-lg-offset-2">
+    <table class="table">
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="col-lg-3 table-bordered warning">
+                        <strong>
+                            @Html.DisplayNameFor(x => item.OrderDate)
+                        </strong>
+                        <div>
+                            @Html.DisplayFor(x => item.OrderDate)
+                        </div>
+                        <strong>
+                            Alıcı
+                        </strong>
+                        <div>
+                            @Html.DisplayFor(x => item.Address.UserFullName)
+                        </div>
+                        <strong>
+                            Adres
+                        </strong>
+                        <div>
+                            @Html.DisplayFor(x => item.Address.Description)
+                        </div>
+                        <strong>
+                            Toplam Tutar
+                        </strong>
+                        <div>
+                            @Html.DisplayFor(x => item.Total) TL
+                        </div>
+                    </td>
+                    <td class="col-lg-9 table-bordered">
+                        <h4>
+                            <strong style="color:coral">
+                                @Html.DisplayFor(x => item.OrderStatus)
+                            </strong>
+                        </h4>
+                        <table class="table table-hover">
+                            <tbody>
+                                @foreach (var cartItem in item.CartItemList)
+                                {
+                                <tr>
+                                    <td class="col-lg-2">
+                                        @*@Html.DisplayFor(x => cartItem.ProductImage)*@
+                                        <img src="" title="Ürün resmi" class="img-rounded" style="background-color:lightgray;min-height:100px;min-width:100px;" />
+                                    </td>
+                                    <td class="col-lg-10">
+                                        <div>
+                                            @Html.DisplayFor(x => cartItem.ProductName)
+                                        </div>
+
+                                        <div>
+                                            @Html.DisplayFor(x => cartItem.ProductDescription)
+                                        </div>
+                                        <div>
+                                            @Html.DisplayFor(x => cartItem.NumberOfProduct) adet
+                                        </div>
+                                    </td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="min-height:50px;"></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

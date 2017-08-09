@@ -32,7 +32,9 @@ namespace TradeSampleProjectWithCore.Controllers
 
         public IActionResult History()
         {
-            return View();
+            List<ViewModelOrder> vmOrderList = new DataService.Order(this.DbContext).GetPurchaseHistory(this.LogInUserId);
+
+            return View(vmOrderList);
         }
 
         public IActionResult PurchaseSuccess()

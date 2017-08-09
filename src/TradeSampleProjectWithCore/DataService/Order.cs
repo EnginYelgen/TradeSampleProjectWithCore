@@ -47,6 +47,62 @@ namespace TradeSampleProjectWithCore.DataService
             };
         }
 
+        public List<ViewModelOrder> GetPurchaseHistory(int userId)
+        {
+            List<ViewModelOrder> vmOrderList = new List<ViewModelOrder>();
+
+            if (this.DbContext.Orders.Include(x => x.ShoppingCart).Any(x => x.ShoppingCart.UserId == userId))
+            {
+                vmOrderList = this.DbContext.Orders
+                    .Include(x => x.ShoppingCart)
+                    .ThenInclude(x => x.ShoppingCartDetails)
+                    .Include(x => x.Address)
+                    .ThenInclude(x => x.City)
+                    .ThenInclude(x => x.Country)
+                    .Include(x => x.Address.User)
+                    .Where(x => x.ShoppingCart.UserId == userId)
+                    .Select(x => new ViewModelOrder
+                    {
+                        OrderDate = x.OrderDate,
+                        IsDelivered = x.IsDelivered,
+                        Total = x.Total,
+                        Address = new ViewModelAddress
+                        {
+                            AddressId = x.Address.Id,
+                            AddressName = x.Address.AddressName,
+                            CityId = x.Address.CityId,
+                            CityName = x.Address.City.Name,
+                            CountryId = x.Address.CountryId,
+                            CountryName = x.Address.Country.Name,
+                            Description = x.Address.Description,
+                            InUse = x.Address.InUse,
+                            IsDeleted = x.Address.IsDeleted,
+                            Number = x.Address.No,
+                            PostCode = x.Address.PostCode,
+                            Street = x.Address.Street,
+                            UserId = x.Address.UserId,
+                            UserFullName = x.Address.User.Name + " " + x.Address.User.Surname
+                        },
+                        CartItemList = x.ShoppingCart.ShoppingCartDetails.Select(y => new ViewModelCartItem
+                        {
+                            NumberOfProduct = y.NumberOfProduct,
+                            ProductDescription = y.Product.Description,
+                            ProductId = y.ProductId,
+                            ProductImage = y.Product.Image,
+                            ProductName = y.Product.Name,
+                            ProductStockCount = y.Product.StockNumber,
+                            ProductUnitPrice = y.Product.UnitPrice,
+                            ShoppingCartDetailId = y.Id,
+                            ShoppingCartId = y.ShoppingCartId
+                        })
+                    })
+                    .OrderByDescending(x => x.OrderDate)
+                    .ToList();
+            }
+
+            return vmOrderList;
+        }
+
         public int GetCartItemCount(int userId)
         {
             int cartId = 0;

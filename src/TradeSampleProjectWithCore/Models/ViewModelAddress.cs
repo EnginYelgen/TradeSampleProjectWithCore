@@ -13,6 +13,9 @@ namespace TradeSampleProjectWithCore.Models
 
         public int UserId { get; set; }
 
+        [Display(Name = "Kullanıcı İsmi")]
+        public string UserFullName { get; set; }
+
         public int CityId { get; set; }
 
         [Display(Name = "Adres İsmi")]
