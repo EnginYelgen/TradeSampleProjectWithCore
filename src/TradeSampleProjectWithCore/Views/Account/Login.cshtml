@@ -6,7 +6,7 @@
 
 
 <div class="row">
-    <div class="col-md-4 col-md-offset-4">
+    <div class="col-lg-4 col-lg-offset-4 col-md-4 col-md-offset-4 col-sm-4 col-sm-offset-4 col-xs-10 col-xs-offset-1">
         <section>
             <form asp-controller="Account" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
                 <h4>Giriş</h4>
@@ -31,8 +31,8 @@
                     @ViewData["Message"]
                 </div>
                 <div class="form-group">
-                    <button type="submit" asp-action="Login" class="btn btn-success btn-lg col-lg-6">Giriş</button>
-                    <button type="submit" asp-action="Register" class="btn btn-warning btn-lg col-lg-6">Üye Ol</button>
+                    <button type="submit" asp-action="Login" class="btn btn-success btn-lg col-lg-4 col-lg-offset-1 col-md-4 col-md-offset-1 col-sm-4 col-sm-offset-1 col-xs-5">Giriş</button>
+                    <button type="submit" asp-action="Register" class="btn btn-warning btn-lg col-lg-4 col-lg-offset-2 col-md-4 col-md-offset-2 col-sm-4 col-sm-offset-2 col-xs-5 col-xs-offset-2">Üye Ol</button>
                 </div>
             </form>
         </section>
